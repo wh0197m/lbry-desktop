@@ -13,6 +13,7 @@ type Props = {
   icon: string,
   tooltip?: string, // tooltip direction
   iconColor?: string,
+  size?: number,
 };
 
 class IconComponent extends React.PureComponent<Props> {
@@ -51,7 +52,7 @@ class IconComponent extends React.PureComponent<Props> {
       color = this.getIconColor(iconColor);
     }
 
-    let size = 14;
+    let size = this.props.size || 14;
     if (icon === icons.ARROW_LEFT || icon === icons.ARROW_RIGHT) {
       size = 20;
     }

@@ -123,7 +123,7 @@ export default appState => {
   window.webContents.on('crashed', () => {
     window = null;
   });
-  
+
   window.webContents.on('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);

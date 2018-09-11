@@ -1,0 +1,36 @@
+.notify {
+  position: relative;
+}
+
+.notify-tile {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.notify .file-tile {
+  margin-top: ($spacing-vertical / 2);
+  padding: 0;
+}
+
+.notify .file-tile__channel {
+  display: inline-block;
+}
+
+.notify-tile .notify-icon {
+  margin-right: ($spacing-vertical / 2);
+}
+
+.notify-tile .notify-message .title {
+  font-size: 14px;
+  margin: 0;
+}
+
+.notify-tile .notify-message .subtitle {
+  font-size: 12px;
+  margin: 0;
+  font-family: 'metropolis-medium';
+  color: var(--card-text-color);
+}

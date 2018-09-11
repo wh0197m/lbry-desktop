@@ -10,6 +10,7 @@ import Button from 'component/button';
 import classnames from 'classnames';
 import FilePrice from 'component/filePrice';
 import UriIndicator from 'component/uriIndicator';
+import DateTime from 'component/dateTime';
 
 type Props = {
   showUri: boolean,
@@ -29,6 +30,8 @@ type Props = {
   hideNoResult: boolean, // don't show the tile if there is no claim at this uri
   displayHiddenMessage?: boolean,
   displayDescription?: boolean,
+  displayChannel?: boolean,
+  displayDate?: boolean,
   size: string,
 };
 
@@ -37,6 +40,7 @@ class FileTile extends React.PureComponent<Props> {
     showUri: false,
     showLocal: false,
     displayDescription: true,
+    displayChannel: true,
     size: 'regular',
   };
 
@@ -67,6 +71,7 @@ class FileTile extends React.PureComponent<Props> {
       hideNoResult,
       displayHiddenMessage,
       displayDescription,
+      displayChannel,
       size,
     } = this.props;
 
@@ -90,10 +95,12 @@ class FileTile extends React.PureComponent<Props> {
     const isRewardContent = claim && rewardedContentClaimIds.includes(claim.claim_id);
     const onClick = () => navigate('/show', { uri });
 
-    let name;
+    let name, height;
     if (claim) {
-      ({ name } = claim);
+      ({ name, height } = claim);
     }
+
+    const displayDate = this.props.displayDate && height;
 
     return !name && hideNoResult ? null : (
       <section
@@ -129,21 +136,26 @@ class FileTile extends React.PureComponent<Props> {
               >
                 <TruncatedText lines={size === 'small' ? 2 : 3}>{title || name}</TruncatedText>
               </div>
-              <div
-                className={classnames('card__subtitle', {
-                  'card__subtitle--x-small': size === 'small',
-                  'card__subtitle--large': size === 'large',
-                })}
-              >
-                <span className="file-tile__channel">
-                  {showUri ? uri : <UriIndicator uri={uri} link />}
-                </span>
-              </div>
+
+              {displayChannel && (
+                <div
+                  className={classnames('card__subtitle', {
+                    'card__subtitle--x-small': size === 'small',
+                    'card__subtitle--large': size === 'large',
+                  })}
+                >
+                  <span className="file-tile__channel">
+                    {showUri ? uri : <UriIndicator uri={uri} link />}
+                  </span>
+                </div>
+              )}
+
               <div className="card__file-properties">
                 <FilePrice hideFree uri={uri} />
                 {isRewardContent && <Icon iconColor="red" icon={icons.FEATURED} />}
                 {showLocal && isDownloaded && <Icon icon={icons.LOCAL} />}
               </div>
+
               {displayDescription && (
                 <div
                   className={classnames('card__subtext', {
@@ -154,6 +166,18 @@ class FileTile extends React.PureComponent<Props> {
                   <TruncatedText lines={size === 'large' ? 4 : 3}>{description}</TruncatedText>
                 </div>
               )}
+
+              {displayDate && (
+                <div
+                  className={classnames('card__subtitle', {
+                    'card__subtitle--x-small': size === 'small',
+                    'card__subtitle--large': size === 'large',
+                  })}
+                >
+                  <DateTime block={height} show={DateTime.SHOW_DATE} />
+                </div>
+              )}
+
               {!name && (
                 <React.Fragment>
                   {__('This location is unused.')}{' '}

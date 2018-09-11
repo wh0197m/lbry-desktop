@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import Notify from 'component/notify';
 import Button from 'component/button';
 import WunderBar from 'component/wunderbar';
 import * as icons from 'constants/icons';
@@ -83,6 +84,8 @@ const Header = (props: Props) => {
           iconRight="LBC"
           description={__('Your wallet')}
         />
+
+        <Notify />
 
         <Button
           uppercase

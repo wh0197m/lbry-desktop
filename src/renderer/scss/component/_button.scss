@@ -150,6 +150,26 @@ button:disabled {
   }
 }
 
+.btn.btn--notify {
+  box-shadow: none;
+
+  .btn__content {
+    padding: 0;
+  }
+}
+
+.btn--notify__badge {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  display: inline-block;
+  border-radius: 8px;
+  background-color: var(--color-red);
+  position: absolute;
+  top: 2px;
+  right: 2px;
+}
+
 .btn.btn--arrow {
   width: var(--btn-arrow-width);
   color: var(--text-color);

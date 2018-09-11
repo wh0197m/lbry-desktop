@@ -26,6 +26,7 @@ const SideBar = (props: Props) => {
   const { navLinks, notifications } = props;
 
   const badges = Object.keys(notifications).length;
+  console.info(notifications);
 
   return (
     <nav className="nav">
