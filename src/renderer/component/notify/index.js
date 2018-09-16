@@ -1,14 +1,21 @@
 import { connect } from 'react-redux';
-import { THEME } from 'constants/settings';
-import { makeSelectClientSetting } from 'redux/selectors/settings';
-
+import {
+  doNotifyStack,
+  doRemoveNotification,
+  doClearNotifyStack,
+  selectNotifications,
+} from 'lbry-redux';
 import Notify from './view';
 
-const select = (state, props) => ({
-  currentTheme: makeSelectClientSetting(THEME)(state),
+const select = state => ({
+  notifications: selectNotifications(state),
 });
 
-const perform = dispatch => ({});
+const perform = dispatch => ({
+  doNotifyStack: notifyData => dispatch(doNotifyStack(notifyData)),
+  doClearNotifyStack: () => dispatch(doClearNotifyStack()),
+  doRemoveNotification: index => dispatch(doRemoveNotification(index)),
+});
 
 export default connect(
   select,

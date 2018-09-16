@@ -2,7 +2,6 @@
 import * as React from 'react';
 import Button from 'component/button';
 import classnames from 'classnames';
-import * as NOTIFICATION_TYPES from 'constants/notification_types';
 
 type SideBarLink = {
   label: string,
@@ -26,7 +25,6 @@ const SideBar = (props: Props) => {
   const { navLinks, notifications } = props;
 
   const badges = Object.keys(notifications).length;
-  console.info(notifications);
 
   return (
     <nav className="nav">

@@ -1,32 +1,21 @@
 // @flow
 import React from 'react';
-import * as icons from 'constants/icons';
-import classnames from 'classnames';
-import NotifyTile from './notifyTile';
 import Button from 'component/button';
+import NotifyTile from './notifyTile';
 
-type Props = {};
+type Props = {
+  onClearItems: () => void,
+  onRemoveItem: number => void,
+  items: Array<React.node>,
+};
 
 class Menu extends React.PureComponent<Props> {
   static defaultProps = {
     items: [],
-    onOpen: () => {},
-    onClose: () => {},
   };
 
-  constructor(props) {
-    super(props);
-  }
-
-  onItemClick(fevent) {
-    if (fevent) {
-      fevent();
-      this.props.onClose();
-    }
-  }
-
   render() {
-    const { items, show, onClose, onClear } = this.props;
+    const { items, onClearItems, onRemoveItem } = this.props;
     return (
       <div className="menu">
         <div className="menu__menu-header">
@@ -37,22 +26,16 @@ class Menu extends React.PureComponent<Props> {
               button="link"
               className=""
               label={__('Mark All as Read')}
-              onClick={onClear}
+              onClick={() => {
+                onClearItems();
+              }}
             />
           </div>
         </div>
         <div className="menu__menu-items-container">
-          {items.map((item, key) => (
-            <div className="menu__menu-item" key={`menu-item${key}`}>
-              <NotifyTile {...item} />
-              <Button
-                noPadding
-                icon={icons.CLOSE}
-                title={__('Remove notification')}
-                button="link"
-                className="btn--item-action"
-                onClick={() => {}}
-              />
+          {items.map((item, index) => (
+            <div className="menu__menu-item" key={item.date}>
+              <NotifyTile {...item} index={index} onDestroy={onRemoveItem} />
             </div>
           ))}
         </div>

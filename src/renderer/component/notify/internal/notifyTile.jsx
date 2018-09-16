@@ -1,15 +1,13 @@
 // @flow
 import React from 'react';
 import moment from 'moment';
+import { isURIValid, normalizeURI } from 'lbry-redux';
+import * as ICONS from 'constants/icons';
 import Icon from 'component/common/icon';
-import * as icons from 'constants/icons';
 import Button from 'component/button';
 import FileTile from 'component/fileTile';
 import UriIndicator from 'component/uriIndicator';
 import TruncatedText from 'component/common/truncated-text';
-import { isURIValid, normalizeURI, parseURI } from 'lbry-redux';
-
-type Props = {};
 
 const ChannelMessage = props => {
   const { action } = props;
@@ -39,22 +37,29 @@ const ChannelMessage = props => {
   );
 };
 
+type Props = {
+  uri?: string,
+  icon?: string,
+  title?: string,
+};
+
 class NotifyTile extends React.PureComponent<Props> {
   render() {
-    const { icon, title } = this.props;
+    const { icon, title, message, onDestroy, index } = this.props;
     const date = this.props.date && moment(this.props.date).fromNow();
 
-    let message = (
+    // Default notification message
+    let notifyMessage = (
       <div className="notify-message">
         <div className="title">
-          <TruncatedText lines={2}>{title}</TruncatedText>
+          <TruncatedText lines={2}>{message}</TruncatedText>
         </div>
         {date && <div className="subtitle">{date}</div>}
       </div>
     );
 
     if (this.props.type === 'channel_updated') {
-      message = <ChannelMessage {...this.props} />;
+      notifyMessage = <ChannelMessage {...this.props} />;
     }
 
     return (
@@ -64,7 +69,15 @@ class NotifyTile extends React.PureComponent<Props> {
             <Icon icon={icon} size={32} />
           </div>
         )}
-        {message}
+        {notifyMessage}
+        <Button
+          noPadding
+          icon={ICONS.CLOSE}
+          title={__('Remove notification')}
+          button="link"
+          className="btn--item-action"
+          onClick={() => onDestroy(index)}
+        />
       </div>
     );
   }
