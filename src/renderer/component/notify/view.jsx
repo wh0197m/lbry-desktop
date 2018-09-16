@@ -73,6 +73,7 @@ class Notify extends React.PureComponent<Props> {
         {open && (
           <Menu
             items={notifyStack}
+            onClose={this.closeMenu}
             onRemoveItem={doRemoveNotification}
             onClearItems={this.clearMenu}
           />

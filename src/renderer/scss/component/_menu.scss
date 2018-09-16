@@ -11,16 +11,6 @@
   z-index: 1;
 }
 
-.menu-wrapper {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.menu-wrapper-active {
-  pointer-events: all;
-  opacity: 1;
-}
-
 .menu .btn {
   margin: 0;
 }
