@@ -1,11 +1,13 @@
 // @flow
 import React from 'react';
 import { stopContextMenu } from 'util/contextMenu';
-import videojs from 'video.js';
+// import videojs, { MediaSource as videoMediaSource, URL as videoURL } from 'video.js';
 import 'video.js/dist/video-js.css';
 import toBlobURL from 'stream-to-blob-url';
 import fs from 'fs';
-import stream from 'stream';
+import * as stream from 'stream';
+import GrowingFile from 'growing-file';
+
 type Props = {
   source: {
     downloadPath: string,
@@ -14,6 +16,15 @@ type Props = {
   contentType: string,
   poster?: string,
 };
+
+/*
+let mediaSource = new MediaSource():
+let sourceBuffer =  mediaSource.addSourceBuffer('video/mp4; codecs="avc1.4d401f,mp4a.40.2"; profiles="isom,mp42"');
+sourceBuffer.appendBuffer(fileData);
+URL.createObjectURL(mediaSource)
+let fileStream = new stream.Writeable();
+growingFile.on('data', (data) => {  sourceBuffer.appendBuffer(data) })
+*/
 
 class AudioVideoViewer extends React.PureComponent<Props> {
   componentDidMount() {
@@ -24,80 +35,134 @@ class AudioVideoViewer extends React.PureComponent<Props> {
     const basePath = downloadPath.slice(0, indexOfFileName);
     const encodedFileName = encodeURIComponent(fileName);
 
-    // We only want to encode the fileName so forward slashes "/" are handled properly by the file system
-    // TODO: Determine changes needed for windows
-    // const path = `content://${basePath}${encodedFileName}`;
+    /*
+    let blob = null;
+    let mimeCodec = 'video/mp4; codecs="avc1.4d401f,mp4a.40.2"; profiles="isom,mp42"';
+    let mediaSource = new MediaSource();
+    let sourceBuffer = null;
+    let chunks = [];
+    let pump = function(){
+        if(chunks[0]){
+            let chunk = chunks[0];
+            delete chunks[0];
+            sourceBuffer.appendBuffer(chunk);
+            chunk = null;
+            chunks.shift();
+        }
+    };
 
-    // Another alternative, maybe we don't need to do anything in the main electron process?
-    // get blob url, then set as source and call videojs()
-    // toBlobURL(fs.createReadStream(downloadPath), (err, url) => {
-    // if (err) return console.error(err.message)
-    // console.log(url);
-    //
+    let called = false;
+    mediaSource.addEventListener('sourceopen', function(_){
+      if(called) {
+        return
+      }
+      called = true;
+      console.log("sourceOpen")
+        sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+        sourceBuffer.addEventListener('updateend', () => {
+          console.log('updateend')
+        }, false);
+
+        let file = GrowingFile.open(downloadPath);
+        file.on('data', (chunk) => {
+          console.log('pump()')
+          chunks[chunks.length] = new Uint8Array(chunk);
+          pump();
+        })
+    });
+    */
+
+    function concatenate(resultConstructor, ...arrays) {
+      let totalLength = 0;
+      for (let arr of arrays) {
+        totalLength += arr.length;
+      }
+      let result = new resultConstructor(totalLength);
+      let offset = 0;
+      for (let arr of arrays) {
+        result.set(arr, offset);
+        offset += arr.length;
+      }
+      return result;
+    }
+
+    let mediaSource = new MediaSource();
+
+
+    mediaSource.addEventListener('sourceopen', () => {
+      console.log('sourceopen');
+      // ; profiles="isom,mp42"
+      let sourceBuffer = mediaSource.addSourceBuffer('video/mp4; codecs="avc1.4d401f,mp4a.40.2"');
+console.log('sourceBuffer', sourceBuffer)
+console.log('typeof sourceBuffer', typeof sourceBuffer)
+      let file = GrowingFile.open(downloadPath);
+      let chunks = [];
+      file.on('data', (data) => chunks.push(data));
+
+      let flushBuffer = setInterval(() => {
+        if(chunks.length === 0) {
+          return;
+        }
+        console.log('appendBuffer');
+        sourceBuffer.appendBuffer(concatenate(Uint8Array, ...chunks));
+        chunks = [];
+      }, 250);
+    });
+
+    mediaSource.addEventListener('sourceended', () => console.log('sourceended'));
+    mediaSource.addEventListener('sourceclose', () => console.log('sourceclose'));
+    mediaSource.addEventListener('error', (error) => console.error(error))
+
+    // Build the url from the mediaSource
+    const url = URL.createObjectURL(mediaSource);
+    console.log("url", url);
+    const element = document.getElementById('video-id');
+    element.src = url;
+    // element.play();
+
+    /*
+    let reader = new FileReader();
+    reader.onload = function(event) {
+        chunks[chunks.length] = new Uint8Array(event.target.result);
+        pump();
+    };
+    reader.readAsArrayBuffer(blob);
+    */
+
+    // let writable = new stream.Writable();
+    // writable.on('pipe', (readableSrc) => {
+    //   readableSrc.on('readable', () => {
+    //     let chunk;
+    //     while (null !== (chunk = readableSrc.read())) {
+    //       console.log(`Received ${chunk.length} bytes of data.`);
+    //     }
+    //   });
+    // })
+
+    // file.pipe(writable);
+
+
     // const sources = [
     //   {
     //     src: url,
     //     type: contentType
     //   }
     // ]
-// https://stackoverflow.com/questions/19277094/how-to-close-a-readable-stream-before-end
-
-    // let blobStream = new stream.Readable();
     //
-    // //let fileStream = fs.createReadStream(downloadPath);
-    //
-    // let LAST_BYTES_WRITTEN = 0;
-    //
-    // setInterval(() => {
-    //   if(BYTES_SENT === LAST_BYTES_WRITTEN)
-    //     fs.readSync(file, position = BYTES_SENT, length = LAST_BYTES_WRITTEN, (data) => {
-    //       blobStream.push(data)
-    //     })
+    // const videoJsOptions = {
+    //   autoplay: true,
+    //   controls: true,
+    //   preload: 'none',
+    //   poster,
+    //   sources,
+    //   flash: {
+    //     swf: "video-js-with-mse.swf",
     //   }
-    //   LAST_BYTES_WRITTEN = BYTES_WRITTEN;
+    // };
+
+    console.log("videojs()")
+    // this.player = videojs(this.videoNode, videoJsOptions, () => {});
     // })
-    //
-    // toBlobURL(blobStream, (err, url) => {
-    // if (err) return console.error(err.message)
-    // console.log(url);
-    // const sources = [
-    //   {
-    //     src: url,
-    //     type: con
-
-
-    let blobStream = new stream.Readable();
-
-    let fileStream = fs.createReadStream(downloadPath);
-
-
-    toBlobURL(blobStream, (err, url) => {
-    if (err) return console.error(err.message)
-    console.log(url);
-    const sources = [
-      {
-        src: url,
-        type: contentType
-      }
-    ]
-
-    // const sources = [
-    //   {
-    //     src: path,
-    //     type: contentType,
-    //   },
-    // ];
-
-    const videoJsOptions = {
-      autoplay: true,
-      controls: true,
-      preload: 'none',
-      poster,
-      sources,
-    };
-
-    this.player = videojs(this.videoNode, videoJsOptions, () => {});
-    })
   }
 
   componentWillUnmount() {
@@ -108,11 +173,12 @@ class AudioVideoViewer extends React.PureComponent<Props> {
 
   render() {
     const { source } = this.props;
+    // <div data-vjs-player>
+    //   <video ref={node => (this.videoNode = node)} className="video-js" />
+    // </div>
     return (
       <div className="file-render__viewer" onContextMenu={stopContextMenu}>
-        <div data-vjs-player>
-          <video ref={node => (this.videoNode = node)} className="video-js" />
-        </div>
+        <video id="video-id" />
       </div>
     );
   }

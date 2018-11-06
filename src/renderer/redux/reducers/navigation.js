@@ -3,7 +3,7 @@ import * as ACTIONS from 'constants/action_types';
 const getCurrentPath = () => {
   const { hash } = document.location;
   if (hash !== '') return hash.replace(/^#/, '');
-  return '/discover';
+  return '/show?uri=lbry://legitimate-cold-fusion-exists-muon#5e5d344a0ead446c13262b74ce958dd63fb30fe4';
 };
 
 const reducers = {};
