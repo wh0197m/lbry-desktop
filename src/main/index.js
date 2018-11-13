@@ -14,6 +14,7 @@ import createWindow from './createWindow';
 import pjson from '../../package.json';
 import path from 'path';
 import fs from 'fs';
+import server from './media-server';
 
 autoUpdater.autoDownload = true;
 
