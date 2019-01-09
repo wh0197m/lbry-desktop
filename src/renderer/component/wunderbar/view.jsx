@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { normalizeURI, SEARCH_TYPES, isURIValid } from 'lbry-redux';
 import Icon from 'component/common/icon';
 import { parseQueryParams } from 'util/query-params';
-import Autocomplete from './internal/autocomplete';
+// import Autocomplete from './internal/autocomplete';
 
 const L_KEY_CODE = 76;
 const ESC_KEY_CODE = 27;
@@ -139,51 +139,54 @@ class WunderBar extends React.PureComponent<Props> {
     return (
       <div className="wunderbar">
         <Icon icon={ICONS.SEARCH} />
-        <Autocomplete
-          autoHighlight
-          wrapperStyle={{ flex: 1, position: 'relative' }}
-          value={wunderbarValue || ''}
-          items={suggestions}
-          getItemValue={item => item.value}
-          onChange={this.handleChange}
-          onSelect={this.handleSubmit}
-          inputProps={{
-            onFocus: doFocus,
-            onBlur: doBlur,
-          }}
-          renderInput={props => (
-            <input
-              {...props}
-              ref={el => {
-                props.ref(el);
-                this.input = el;
-              }}
-              className="wunderbar__input"
-              placeholder="Enter LBRY URL here or search for videos, music, games and more"
-            />
-          )}
-          renderItem={({ value, type }, isHighlighted) => (
-            <div
-              key={value}
-              className={classnames('wunderbar__suggestion', {
-                'wunderbar__active-suggestion': isHighlighted,
-              })}
-            >
-              <Icon icon={this.getSuggestionIcon(type)} />
-              <span className="wunderbar__suggestion-label">{value}</span>
-              {isHighlighted && (
-                <span className="wunderbar__suggestion-label--action">
-                  {type === SEARCH_TYPES.SEARCH && __('Search')}
-                  {type === SEARCH_TYPES.CHANNEL && __('View channel')}
-                  {type === SEARCH_TYPES.FILE && __('View file')}
-                </span>
-              )}
-            </div>
-          )}
-        />
       </div>
     );
   }
+}
+
+{
+  /* <Autocomplete
+  autoHighlight
+  wrapperStyle={{ flex: 1, position: 'relative' }}
+  value={wunderbarValue || ''}
+  items={suggestions}
+  getItemValue={item => item.value}
+  onChange={this.handleChange}
+  onSelect={this.handleSubmit}
+  inputProps={{
+    onFocus: doFocus,
+    onBlur: doBlur,
+  }}
+  renderInput={props => (
+    <input
+      {...props}
+      ref={el => {
+        props.ref(el);
+        this.input = el;
+      }}
+      className="wunderbar__input"
+      placeholder="Enter LBRY URL here or search for videos, music, games and more"
+    />
+  )}
+  renderItem={({ value, type }, isHighlighted) => (
+    <div
+      key={value}
+      className={classnames('wunderbar__suggestion', {
+        'wunderbar__active-suggestion': isHighlighted,
+      })}
+    >
+      <Icon icon={this.getSuggestionIcon(type)} />
+      <span className="wunderbar__suggestion-label">{value}</span>
+      {isHighlighted && (
+        <span className="wunderbar__suggestion-label--action">
+          {type === SEARCH_TYPES.SEARCH && __('Search')}
+          {type === SEARCH_TYPES.CHANNEL && __('View channel')}
+          {type === SEARCH_TYPES.FILE && __('View file')}
+        </span>
+      )}
+    </div>
+  )}
+/> */
 }
 
 export default WunderBar;

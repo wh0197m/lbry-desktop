@@ -22,24 +22,6 @@ class DateTime extends React.PureComponent<Props> {
     },
   };
 
-  componentWillMount() {
-    // this.refreshDate(this.props);
-  }
-
-  componentWillReceiveProps() {
-    // this.refreshDate(props);
-  }
-
-  // Removing this for performance reasons. Can be un-commented once block_show is better with large numbers of calls
-  // Or the date is included in the claim
-  //
-  // refreshDate(props: Props) {
-  //   const { block, date, fetchBlock } = props;
-  //   if (block && date === undefined) {
-  //     fetchBlock(block);
-  //   }
-  // }
-
   render() {
     const { date, formatOptions, timeAgo } = this.props;
     const show = this.props.show || DateTime.SHOW_BOTH;

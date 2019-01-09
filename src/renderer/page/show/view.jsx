@@ -26,8 +26,8 @@ class ShowPage extends React.PureComponent<Props> {
     if (!isResolvingUri) resolveUri(uri);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { isResolvingUri, resolveUri, claim, uri } = nextProps;
+  componentDidUpdate() {
+    const { isResolvingUri, resolveUri, claim, uri } = this.props;
 
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
@@ -43,9 +43,10 @@ class ShowPage extends React.PureComponent<Props> {
       innerContent = (
         <Page notContained>
           {isResolvingUri && <BusyIndicator message={__('Loading decentralized data...')} />}
-          {claim === null && !isResolvingUri && (
-            <span className="empty">{__("There's nothing at this location.")}</span>
-          )}
+          {claim === null &&
+            !isResolvingUri && (
+              <span className="empty">{__("There's nothing at this location.")}</span>
+            )}
         </Page>
       );
     } else if (claim && claim.name.length && claim.name[0] === '@') {

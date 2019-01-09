@@ -36,11 +36,11 @@ class FileCard extends React.PureComponent<Props> {
     placeholder: false,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     this.resolve(this.props);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(nextProps: Props) {
     this.resolve(nextProps);
   }
 

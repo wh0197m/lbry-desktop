@@ -17,12 +17,12 @@ type Props = {
 };
 
 class UriIndicator extends React.PureComponent<Props> {
-  componentWillMount() {
+  componentDidMount() {
     this.resolve(this.props);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.resolve(nextProps);
+  componentDidUpdate() {
+    this.resolve(this.props);
   }
 
   resolve = (props: Props) => {

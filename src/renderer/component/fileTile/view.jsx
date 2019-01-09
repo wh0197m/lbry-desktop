@@ -45,8 +45,8 @@ class FileTile extends React.PureComponent<Props> {
     if (!isResolvingUri && !claim && uri) resolveUri(uri);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { isResolvingUri, claim, uri, resolveUri } = nextProps;
+  componentDidUpdate() {
+    const { isResolvingUri, claim, uri, resolveUri } = this.props;
     if (!isResolvingUri && claim === undefined && uri) resolveUri(uri);
   }
 

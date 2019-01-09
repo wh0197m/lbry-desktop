@@ -40,8 +40,8 @@ class ActiveShapeShift extends React.PureComponent<Props> {
     }, 10000);
   }
 
-  componentWillUpdate(nextProps: Props) {
-    const { shiftState } = nextProps;
+  componentDidUpdate() {
+    const { shiftState } = this.props;
     if (shiftState === statuses.COMPLETE) {
       this.clearContinuousFetch();
     }
@@ -134,12 +134,13 @@ class ActiveShapeShift extends React.PureComponent<Props> {
             />
           )}
         </div>
-        {shiftState === statuses.NO_DEPOSITS && shiftReturnAddress && (
-          <div className="help">
-            {__("If the transaction doesn't go through, ShapeShift will return your")}{' '}
-            {shiftCoinType} {__('back to')} {shiftReturnAddress}
-          </div>
-        )}
+        {shiftState === statuses.NO_DEPOSITS &&
+          shiftReturnAddress && (
+            <div className="help">
+              {__("If the transaction doesn't go through, ShapeShift will return your")}{' '}
+              {shiftCoinType} {__('back to')} {shiftReturnAddress}
+            </div>
+          )}
       </div>
     );
   }

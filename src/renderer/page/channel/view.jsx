@@ -32,11 +32,11 @@ class ChannelPage extends React.PureComponent<Props> {
     fetchClaims(uri, page || 1);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { page, fetchClaims } = this.props;
+  componentDidUpdate(prevProps: Props) {
+    const { page, uri, fetchClaims } = this.props;
 
-    if (nextProps.page && page !== nextProps.page) {
-      fetchClaims(nextProps.uri, nextProps.page);
+    if (page && page !== prevProps.page) {
+      fetchClaims(uri, page);
     }
   }
 

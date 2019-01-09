@@ -209,7 +209,7 @@ export default class Autocomplete extends React.Component {
     this.maybeAutoCompleteText = this.maybeAutoCompleteText.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // this.refs is frozen, so we need to assign a new object to it
     this.refs = {};
     this._ignoreBlur = false;
@@ -223,18 +223,6 @@ export default class Autocomplete extends React.Component {
     this._scrollTimer = null;
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.state.highlightedIndex !== null) {
-      this.setState(this.ensureHighlightedIndex);
-    }
-    if (
-      nextProps.autoHighlight &&
-      (this.props.value !== nextProps.value || this.state.highlightedIndex === null)
-    ) {
-      this.setState(this.maybeAutoCompleteText);
-    }
-  }
-
   componentDidMount() {
     if (this.isOpen()) {
       this.setMenuPositions();
@@ -242,6 +230,15 @@ export default class Autocomplete extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
+    const { autoHighlight, value } = this.props;
+
+    if (this.state.highlightedIndex !== null) {
+      this.setState(this.ensureHighlightedIndex);
+    }
+    if (autoHighlight && (this.props.value !== value || this.state.highlightedIndex === null)) {
+      this.setState(this.maybeAutoCompleteText);
+    }
+
     if (
       (this.state.isOpen && !prevState.isOpen) ||
       ('open' in this.props && this.props.open && !prevProps.open)

@@ -81,14 +81,14 @@ class FilePage extends React.Component<Props> {
     setViewed(uri);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    const { fetchFileInfo, uri, setViewed } = this.props;
-    if (nextProps.fileInfo === undefined) {
+  componentDidUpdate(prevProps: Props) {
+    const { fetchFileInfo, uri, setViewed, fileInfo } = this.props;
+    if (fileInfo === undefined) {
       fetchFileInfo(uri);
     }
 
-    if (uri !== nextProps.uri) {
-      setViewed(nextProps.uri);
+    if (uri !== prevProps.uri) {
+      setViewed(uri);
     }
   }
 

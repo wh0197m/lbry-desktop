@@ -22,12 +22,12 @@ type Props = {
 };
 
 class AuthPage extends React.PureComponent<Props> {
-  componentWillMount() {
+  componentDidMount() {
     this.navigateIfAuthenticated(this.props);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.navigateIfAuthenticated(nextProps);
+  componentDidUpdate() {
+    this.navigateIfAuthenticated(this.props);
   }
 
   getTitle() {

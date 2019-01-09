@@ -5,7 +5,7 @@ import InviteList from 'component/inviteList';
 import Page from 'component/page';
 
 class InvitePage extends React.PureComponent {
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchInviteStatus();
   }
 

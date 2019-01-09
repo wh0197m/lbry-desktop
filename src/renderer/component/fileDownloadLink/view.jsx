@@ -26,7 +26,7 @@ type Props = {
 };
 
 class FileDownloadLink extends React.PureComponent<Props> {
-  componentWillUpdate() {
+  componentDidUpdate() {
     const { downloading, fileInfo, uri, restartDownload } = this.props;
     if (
       !downloading &&

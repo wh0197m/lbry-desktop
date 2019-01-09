@@ -45,12 +45,12 @@ class ModalRouter extends React.PureComponent<Props> {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.showTransitionModals(this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.showTransitionModals(nextProps);
+  componentDidUpdate() {
+    this.showTransitionModals(this.props);
   }
 
   showTransitionModals(props) {

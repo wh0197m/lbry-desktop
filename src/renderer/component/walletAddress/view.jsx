@@ -27,7 +27,7 @@ class WalletAddress extends React.PureComponent<Props, State> {
     this.toggleQR = this.toggleQR.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { checkAddressIsMine, receiveAddress, getNewAddress } = this.props;
     if (!receiveAddress) {
       getNewAddress();

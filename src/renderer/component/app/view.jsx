@@ -7,6 +7,8 @@ import throttle from 'util/throttle';
 import SideBar from 'component/sideBar';
 import Header from 'component/header';
 import { openContextMenu } from '../../util/context-menu';
+import pjson from 'package.json';
+import SplashScreen from 'component/splash';
 
 const TWO_POINT_FIVE_MINUTES = 1000 * 60 * 2.5;
 
@@ -23,12 +25,15 @@ type Props = {
 class App extends React.PureComponent<Props> {
   constructor() {
     super();
+    this.state = {
+      launching: true,
+    };
     this.mainContent = undefined;
     (this: any).scrollListener = this.scrollListener.bind(this);
   }
 
-  componentWillMount() {
-    const { alertError, theme } = this.props;
+  componentDidMount() {
+    const { alertError, theme, updateBlockHeight, daemonReady } = this.props;
 
     // TODO: create type for this object
     // it lives in jsonrpc.js
@@ -38,10 +43,6 @@ class App extends React.PureComponent<Props> {
 
     // $FlowFixMe
     document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  componentDidMount() {
-    const { updateBlockHeight } = this.props;
 
     const mainContent = document.getElementById('content');
     this.mainContent = mainContent;
@@ -58,14 +59,11 @@ class App extends React.PureComponent<Props> {
     }, TWO_POINT_FIVE_MINUTES);
   }
 
-  componentWillReceiveProps(props: Props) {
-    const { pageTitle } = props;
-    this.setTitleFromProps(pageTitle);
-  }
-
   componentDidUpdate(prevProps: Props) {
     const { currentStackIndex: prevStackIndex, theme: prevTheme } = prevProps;
-    const { currentStackIndex, currentPageAttributes, theme } = this.props;
+    const { currentStackIndex, currentPageAttributes, theme, pageTitle } = this.props;
+
+    this.setTitleFromProps(pageTitle);
 
     if (this.mainContent && currentStackIndex !== prevStackIndex && currentPageAttributes) {
       this.mainContent.scrollTop = currentPageAttributes.scrollY || 0;
@@ -98,16 +96,31 @@ class App extends React.PureComponent<Props> {
   mainContent: ?HTMLElement;
 
   render() {
+    console.log('this.sate', this.state.launching);
     return (
       <div id="window" onContextMenu={e => openContextMenu(e)}>
-        <Header />
-        <main className="page">
-          <SideBar />
-          <div className="content" id="content">
-            <Router />
-            <ModalRouter />
-          </div>
-        </main>
+        {this.state.loading ? (
+          <SplashScreen
+            authenticate={() => this.props.authenticate(pjson.version)}
+            onReadyToLaunch={() => {
+              console.log('ready to launch!');
+              this.props.daemonReady();
+              this.setState({ loading: false });
+            }}
+          />
+        ) : (
+          <React.Fragment>
+            {' '}
+            <Header />
+            <main className="page">
+              <SideBar />
+              <div className="content" id="content">
+                <Router />
+                <ModalRouter />
+              </div>
+            </main>
+          </React.Fragment>
+        )}
       </div>
     );
   }

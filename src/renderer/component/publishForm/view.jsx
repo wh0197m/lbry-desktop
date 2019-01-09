@@ -71,7 +71,7 @@ class PublishForm extends React.PureComponent<Props> {
     (this: any).getNewUri = this.getNewUri.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const { thumbnail } = this.props;
     if (!thumbnail) {
       this.props.resetThumbnailStatus();

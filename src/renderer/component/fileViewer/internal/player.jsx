@@ -111,9 +111,9 @@ class MediaPlayer extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps(next) {
+  componentDidUpdate(prevProps) {
     const el = this.media.children[0];
-    if (!this.props.paused && next.paused && !el.paused) el.pause();
+    if (!prevProps && this.props.paused && !el.paused) el.pause();
   }
 
   componentDidUpdate() {

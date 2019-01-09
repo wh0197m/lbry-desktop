@@ -82,15 +82,15 @@ Lbryio.setOverride(
 );
 
 rewards.setCallback('claimFirstRewardSuccess', () => {
-  app.store.dispatch(doOpenModal(MODALS.FIRST_REWARD));
+  store.dispatch(doOpenModal(MODALS.FIRST_REWARD));
 });
 
 rewards.setCallback('rewardApprovalRequired', () => {
-  app.store.dispatch(doOpenModal(MODALS.REWARD_APPROVAL_REQUIRED));
+  store.dispatch(doOpenModal(MODALS.REWARD_APPROVAL_REQUIRED));
 });
 
 rewards.setCallback('claimRewardSuccess', () => {
-  app.store.dispatch(doHideModal(MODALS.REWARD_APPROVAL_REQUIRED));
+  store.dispatch(doHideModal(MODALS.REWARD_APPROVAL_REQUIRED));
 });
 
 ipcRenderer.on('open-uri-requested', (event, uri, newSession) => {
@@ -103,10 +103,10 @@ ipcRenderer.on('open-uri-requested', (event, uri, newSession) => {
         console.log(error);
       }
       if (verification.token && verification.recaptcha) {
-        app.store.dispatch(doConditionalAuthNavigate(newSession));
-        app.store.dispatch(doUserEmailVerify(verification.token, verification.recaptcha));
+        store.dispatch(doConditionalAuthNavigate(newSession));
+        store.dispatch(doUserEmailVerify(verification.token, verification.recaptcha));
       } else {
-        app.store.dispatch(
+        store.dispatch(
           doToast({
             message: 'Invalid Verification URI',
           })
@@ -114,11 +114,11 @@ ipcRenderer.on('open-uri-requested', (event, uri, newSession) => {
       }
     } else if (uri.startsWith(APPPAGEURL)) {
       const navpage = uri.replace(APPPAGEURL, '').toLowerCase();
-      app.store.dispatch(doNavigate(`/${navpage}`));
+      store.dispatch(doNavigate(`/${navpage}`));
     } else if (isURIValid(uri)) {
-      app.store.dispatch(doNavigate('/show', { uri }));
+      store.dispatch(doNavigate('/show', { uri }));
     } else {
-      app.store.dispatch(
+      store.dispatch(
         doToast({
           message: __('Invalid LBRY URL requested'),
         })
@@ -129,7 +129,7 @@ ipcRenderer.on('open-uri-requested', (event, uri, newSession) => {
 
 ipcRenderer.on('open-menu', (event, uri) => {
   if (uri && uri.startsWith('/help')) {
-    app.store.dispatch(doNavigate('/help'));
+    store.dispatch(doNavigate('/help'));
   }
 });
 
@@ -137,7 +137,7 @@ const { dock } = remote.app;
 
 ipcRenderer.on('window-is-focused', () => {
   if (!dock) return;
-  app.store.dispatch({ type: ACTIONS.WINDOW_FOCUSED });
+  store.dispatch({ type: ACTIONS.WINDOW_FOCUSED });
   dock.setBadge('');
 });
 
@@ -202,42 +202,42 @@ const init = () => {
     });
     autoUpdater.on('update-downloaded', () => {
       console.log('Update downloaded');
-      app.store.dispatch(doAutoUpdate());
+      store.dispatch(doAutoUpdate());
     });
   }
 
-  app.store.dispatch(doUpdateIsNightAsync());
-  app.store.dispatch(doDownloadLanguages());
-  app.store.dispatch(doBlackListedOutpointsSubscribe());
+  store.dispatch(doUpdateIsNightAsync());
+  store.dispatch(doDownloadLanguages());
+  store.dispatch(doBlackListedOutpointsSubscribe());
 
-  function onDaemonReady() {
-    window.sessionStorage.setItem('loaded', 'y'); // once we've made it here once per session, we don't need to show splash again
-    app.store.dispatch(doDaemonReady());
+  // function onDaemonReady() {
+  // window.sessionStorage.setItem('loaded', 'y'); // once we've made it here once per session, we don't need to show splash again
+  // store.dispatch(doDaemonReady());
 
-    ReactDOM.render(
+  ReactDOM.render(
+    <React.StrictMode>
       <Provider store={store}>
-        <div>
-          <App />
-          <SnackBar />
-        </div>
-      </Provider>,
-      document.getElementById('app')
-    );
-  }
+        <App />
+      </Provider>
+    </React.StrictMode>,
+    document.getElementById('app')
+  );
+  // }
 
-  if (window.sessionStorage.getItem('loaded') === 'y') {
-    onDaemonReady();
-  } else {
-    ReactDOM.render(
-      <Provider store={store}>
-        <SplashScreen
-          authenticate={() => app.store.dispatch(doAuthenticate(pjson.version))}
-          onReadyToLaunch={onDaemonReady}
-        />
-      </Provider>,
-      document.getElementById('app')
-    );
-  }
+  // if (window.sessionStorage.getItem('loaded') === 'y') {
+  //   onDaemonReady();
+  //   console.log('ready - re render');
+  // } else {
+  //   ReactDOM.render(
+  //     <Provider store={store}>
+  //        <SplashScreen
+  //   authenticate={() => store.dispatch(doAuthenticate(pjson.version))}
+  //   onReadyToLaunch={onDaemonReady}
+  // />
+  //     </Provider>,
+  //     document.getElementById('app')
+  //   );
+  // }
 };
 
 init();

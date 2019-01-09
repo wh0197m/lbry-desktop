@@ -29,10 +29,10 @@ class ChannelTile extends React.PureComponent<Props> {
     resolveUri(uri);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
+  componentDidUpdate(prevProps: Props) {
     const { uri, resolveUri } = this.props;
 
-    if (nextProps.uri !== uri) {
+    if (prevProps.uri !== uri) {
       resolveUri(uri);
     }
   }
