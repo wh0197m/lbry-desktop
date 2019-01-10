@@ -502,10 +502,8 @@
 
 .media-group--list-recommended {
   border-left: 1px solid $lbry-gray-1;
-  float: right;
   min-height: 50vh;
   overflow: hidden;
-  padding-left: var(--spacing-vertical-large);
   width: 30rem;
 
   html[data-theme='dark'] & {
